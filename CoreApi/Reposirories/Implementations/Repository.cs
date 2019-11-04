@@ -11,12 +11,23 @@ namespace CoreApi.Reposirories.Implementations
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly StoreDbContext _dbContext;
+        private DbSet<T> _dbSet => _dbContext.Set<T>();
         public Repository(StoreDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        
+        private IQueryable<T> SetIncludedItems(DbSet<T> _dbSet, params Expression<Func<T, object>>[] includeExpressions)
+        {
+            var set = _dbSet.AsQueryable();
+
+            if (includeExpressions.Any())
+                set = includeExpressions
+                      .Aggregate<Expression<Func<T, object>>, IQueryable<T>>
+                        (_dbSet, (current, expression) => current.Include(expression));
+            return set;
+        }
+
         public void Add(T entity)
         {
             _dbContext.Set<T>().Add(entity);
@@ -24,28 +35,35 @@ namespace CoreApi.Reposirories.Implementations
 
         public void Delete(T entity)
         {
-            T existing = _dbContext.Set<T>().Find(entity);
-            if(existing != null ) _dbContext.Set<T>().Remove(entity);
+            T existing = _dbSet.Find(entity);
+            if (existing != null) _dbContext.Set<T>().Remove(entity);
         }
 
-        public IEnumerable<T> Get(params Expression<Func<T, object>>[] includeExpressions)
+        public T Get(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeExpressions)
         {
-            var set = includeExpressions
-                  .Aggregate<Expression<Func<T, object>>, IQueryable<T>>
-                    (_dbContext.Set<T>(), (current, expression) => current.Include(expression));
+            var set = SetIncludedItems(_dbSet, includeExpressions);
 
-            return set.AsEnumerable<T>();
+            return set.FirstOrDefault(predicate);
         }
 
-        //public IEnumerable<T> Get(Expression<Func<T, bool>> predicate)
-        //{
-        //    return _dbContext.Set<T>().Where(predicate).AsEnumerable();
-        //}
+        public IEnumerable<T> GetAll(params Expression<Func<T, object>>[] includeExpressions)
+        {
+            var set = SetIncludedItems(_dbSet, includeExpressions);
+
+            return set.AsEnumerable();
+        }
+
+        public IEnumerable<T> Search(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeExpressions)
+        {
+            var set = SetIncludedItems(_dbSet, includeExpressions);
+
+            return set.Where(predicate).AsEnumerable();
+        }
 
         public void Update(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
-            _dbContext.Set<T>().Attach(entity);
+            _dbSet.Attach(entity);
         }
     }
 }

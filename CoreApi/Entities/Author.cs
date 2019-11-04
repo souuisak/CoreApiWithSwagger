@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace CoreApi.Models
+namespace CoreApi.Entities
 {
     [Serializable]
     public class Author
@@ -11,6 +9,7 @@ namespace CoreApi.Models
         public int Id { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
+        public string Trigram { get; set; }
         public virtual ICollection<Book> Books { get; set; }
     }
 }

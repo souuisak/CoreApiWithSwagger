@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CoreApi.Entities;
 using CoreApi.Models;
 using CoreApi.Reposirories;
 using Microsoft.AspNetCore.Mvc;
@@ -23,8 +25,37 @@ namespace CoreApi.Controllers
         [HttpGet]
         public ActionResult<IEnumerable<Author>> Get()
         {
-            var result = UnitOfWork.AuthorRepository.Get(x => x.Books).ToList();
+            var result = UnitOfWork.AuthorRepository.GetAll(x => x.Books).ToList();
             return Ok(result);
+        }
+
+        [HttpGet("{trigram}")]
+        [ProducesResponseType(typeof(Author), 200)]
+        [ProducesResponseType(typeof(BadRequestResult), 400)]
+        public ActionResult<Author> GetByTrigram(string trigram)
+        {
+            if (string.IsNullOrEmpty(trigram))
+                return BadRequest();
+
+            return Ok(UnitOfWork.AuthorRepository.Get(x=>x.Trigram.ToLower().Equals(trigram.ToLower()), x => x.Books));
+
+        }
+
+        [HttpPut]
+        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(BadRequestResult), 400)]
+        public ActionResult Put([Required][FromBody] AddAuthorVM author)
+        {
+            if (string.IsNullOrEmpty(author.Trigram))
+                return BadRequest();
+
+            UnitOfWork.AuthorRepository.Add(new Author
+            {
+                LastName = author.LastName,
+                FirstName = author.FirstName,
+                Trigram = author.Trigram.ToUpper()
+            });
+            return Ok();
         }
 
         //// GET api/values/5

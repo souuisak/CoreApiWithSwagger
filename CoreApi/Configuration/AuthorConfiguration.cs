@@ -1,4 +1,4 @@
-﻿using CoreApi.Models;
+﻿using CoreApi.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -18,6 +18,12 @@ namespace CoreApi.Configuration
             builder
                 .Property(x => x.LastName)
                 .HasMaxLength(200);
+            builder
+                .Property(x => x.Trigram)
+                .HasMaxLength(3)
+                .IsRequired();
+            
+            
             builder
                 .Property(x => x.Id)
                 .UseSqlServerIdentityColumn();

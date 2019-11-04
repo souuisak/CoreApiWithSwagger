@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreApi.Configuration;
-using CoreApi.Models;
+using CoreApi.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace CoreApi.Reposirories.Implementations
