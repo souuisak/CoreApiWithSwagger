@@ -22,8 +22,11 @@ namespace CoreApi.Configuration
                 .Property(x => x.Trigram)
                 .HasMaxLength(3)
                 .IsRequired();
-            
-            
+
+            builder
+                .HasIndex(x => x.Trigram)
+                .IsUnique();
+
             builder
                 .Property(x => x.Id)
                 .UseSqlServerIdentityColumn();

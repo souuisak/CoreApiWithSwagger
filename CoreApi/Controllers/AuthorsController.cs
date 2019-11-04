@@ -1,13 +1,12 @@
-﻿using System;
+﻿using CoreApi.Entities;
+using CoreApi.Models;
+using CoreApi.Reposirories;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
-using CoreApi.Entities;
-using CoreApi.Models;
-using CoreApi.Reposirories;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CoreApi.Controllers
 {
@@ -21,7 +20,7 @@ namespace CoreApi.Controllers
         }
 
         private IUnitOfWork UnitOfWork { get; }
-        // GET api/values
+
         [HttpGet]
         public ActionResult<IEnumerable<Author>> Get()
         {
@@ -44,7 +43,7 @@ namespace CoreApi.Controllers
         [HttpPut]
         [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(BadRequestResult), 400)]
-        public ActionResult Put([Required][FromBody] AddAuthorVM author)
+        public ActionResult Add([Required][FromBody] AddAuthorVM author)
         {
             if (string.IsNullOrEmpty(author.Trigram))
                 return BadRequest();
@@ -58,29 +57,41 @@ namespace CoreApi.Controllers
             return Ok();
         }
 
-        //// GET api/values/5
-        //[HttpGet("{id}")]
-        //public ActionResult<string> Get(int id)
-        //{
-        //    return "value";
-        //}
+        [HttpPost]
+        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(BadRequestResult), 400)]
+        public ActionResult Update([Required][FromBody] AddAuthorVM author)
+        {
+            if (string.IsNullOrEmpty(author.Trigram))
+                return BadRequest();
 
-        //// POST api/values
-        //[HttpPost]
-        //public void Post([FromBody] string value)
-        //{
-        //}
+            var existingAuthor = UnitOfWork.AuthorRepository.Get(x => x.Trigram.ToLower().Equals(author.Trigram.ToLower()), null);
+            if(existingAuthor == null)
+                return BadRequest();
 
-        //// PUT api/values/5
-        //[HttpPut("{id}")]
-        //public void Put(int id, [FromBody] string value)
-        //{
-        //}
+            existingAuthor.FirstName = author.FirstName;
+            existingAuthor.LastName = author.LastName;            
 
-        //// DELETE api/values/5
-        //[HttpDelete("{id}")]
-        //public void Delete(int id)
-        //{
-        //}
+            UnitOfWork.AuthorRepository.Update(existingAuthor);
+            return Ok();
+
+        }
+
+        [HttpDelete("{trigram}")]
+        [ProducesResponseType(typeof(void), 200)]
+        [ProducesResponseType(typeof(BadRequestResult), 400)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        public ActionResult Delete(string trigram)
+        {
+            if (string.IsNullOrEmpty(trigram))
+                return BadRequest();
+
+            var existingAuthor = UnitOfWork.AuthorRepository.Get(x => x.Trigram.ToLower().Equals(trigram.ToLower()), null);
+            if (existingAuthor == null)
+                return NoContent();
+
+            UnitOfWork.AuthorRepository.Delete(existingAuthor) ;
+            return Ok();
+        }
     }
 }

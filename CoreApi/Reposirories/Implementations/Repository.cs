@@ -21,7 +21,7 @@ namespace CoreApi.Reposirories.Implementations
         {
             var set = _dbSet.AsQueryable();
 
-            if (includeExpressions.Any())
+            if (includeExpressions != null && includeExpressions.Any())
                 set = includeExpressions
                       .Aggregate<Expression<Func<T, object>>, IQueryable<T>>
                         (_dbSet, (current, expression) => current.Include(expression));
@@ -35,8 +35,7 @@ namespace CoreApi.Reposirories.Implementations
 
         public void Delete(T entity)
         {
-            T existing = _dbSet.Find(entity);
-            if (existing != null) _dbContext.Set<T>().Remove(entity);
+            _dbContext.Set<T>().Remove(entity);
         }
 
         public T Get(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] includeExpressions)
@@ -63,7 +62,6 @@ namespace CoreApi.Reposirories.Implementations
         public void Update(T entity)
         {
             _dbContext.Entry(entity).State = EntityState.Modified;
-            _dbSet.Attach(entity);
         }
     }
 }
