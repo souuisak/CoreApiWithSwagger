@@ -21,12 +21,22 @@ namespace CoreApi.Controllers
 
         private IUnitOfWork UnitOfWork { get; }
 
+        /// <summary>
+        ///  Get a list of all available Authors 
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult<IEnumerable<Author>> Get()
         {
             var result = UnitOfWork.AuthorRepository.GetAll(x => x.Books).ToList();
             return Ok(result);
         }
+
+        /// <summary>
+        /// Get an Author by its Trigram
+        /// </summary>
+        /// <param name="trigram"> The author Trigram</param>
+        /// <returns></returns>
 
         [HttpGet("{trigram}")]
         [ProducesResponseType(typeof(Author), 200)]
@@ -40,6 +50,11 @@ namespace CoreApi.Controllers
 
         }
 
+        /// <summary>
+        /// Add an author
+        /// </summary>
+        /// <param name="author"> The author with updated values </param>
+        /// <returns></returns>
         [HttpPut]
         [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(BadRequestResult), 400)]
@@ -57,6 +72,11 @@ namespace CoreApi.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Update an existing auhtor
+        /// </summary>
+        /// <param name="author"> the new author with the diffrent values</param>
+        /// <returns></returns>
         [HttpPost]
         [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(BadRequestResult), 400)]
@@ -77,6 +97,11 @@ namespace CoreApi.Controllers
 
         }
 
+        /// <summary>
+        /// Delete an existing author
+        /// </summary>
+        /// <param name="trigram">The author Trigram</param>
+        /// <returns></returns>
         [HttpDelete("{trigram}")]
         [ProducesResponseType(typeof(void), 200)]
         [ProducesResponseType(typeof(BadRequestResult), 400)]

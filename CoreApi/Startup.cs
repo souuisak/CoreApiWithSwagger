@@ -39,6 +39,9 @@ namespace CoreApi
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new Info { Title = "Soumaya API", Version = "v1" });
+                var xmlCommentsFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlCommentsFullPath = Path.Combine(AppContext.BaseDirectory, xmlCommentsFile);
+                options.IncludeXmlComments(xmlCommentsFullPath);
             });
         }
 

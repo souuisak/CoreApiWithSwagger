@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CoreApi</name>
+    </assembly>
+    <members>
+        <member name="M:CoreApi.Controllers.AuthorsController.Get">
+            <summary>
+             Get a list of all available Authors 
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:CoreApi.Controllers.AuthorsController.GetByTrigram(System.String)">
+            <summary>
+            Get an Author by its Trigram
+            </summary>
+            <param name="trigram"> The author Trigram</param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreApi.Controllers.AuthorsController.Add(CoreApi.Models.AddAuthorVM)">
+            <summary>
+            Add an author
+            </summary>
+            <param name="author"> The author with updated values </param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreApi.Controllers.AuthorsController.Update(CoreApi.Models.AddAuthorVM)">
+            <summary>
+            Update an existing auhtor
+            </summary>
+            <param name="author"> the new author with the diffrent values</param>
+            <returns></returns>
+        </member>
+        <member name="M:CoreApi.Controllers.AuthorsController.Delete(System.String)">
+            <summary>
+            Delete an existing author
+            </summary>
+            <param name="trigram">The author Trigram</param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
